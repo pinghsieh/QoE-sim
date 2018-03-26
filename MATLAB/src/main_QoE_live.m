@@ -3,12 +3,17 @@ clear;
 tic;
 
 %% Part 1: Configuration
-config.config_ONOFF_10links;
-
+%config.config_ONOFF_3links;
+%config.config_ONOFF_1link;
+config.config_ONOFF_2links;
+%config.config_ONOFF_2links_with_dummy;
 
 %% Part 2: Initialization
+for m=1:N_trials
 % For live streaming
 Dn_Avg = zeros(N, Ttot);
+Un_Avg = zeros(N, Ttot);
+Bn_max = Boffset{m};
 
 %% Part 3: Main Operations
 for i=1:Run
@@ -20,21 +25,29 @@ for i=1:Run
     Dn_history = zeros(N,Ttot);
     Bn_history = zeros(N,Ttot);
     Zn_history = zeros(N,Ttot);
+    Un_history = zeros(N,Ttot);
     Xn = zeros(N,1);
     Dn = zeros(N,1);
     Bn = zeros(N,1);
     Zn = zeros(N,1);
+    Un = zeros(N,1);
     
     %% slot-wise update
     for t=1:Ttot
         % Get playback rates
-        InsRate = get_channel_rate(N, cdf_fade, channel_rate_vec);
-        
+        if dummy == 1
+            InsRate = get_channel_rate_with_dummy(N, cdf_fade, channel_rate_vec);
+        else
+            InsRate = get_channel_rate(N, cdf_fade, channel_rate_vec);
+        end           
         % Scheduling: 
         % schedule is a N-by-1 boolean vector
         switch policy
             case "HDR"
                 schedule = HDR(Zn, wn_HDR, InsRate);
+                
+            case "HDRbuff"
+                schedule = HDRbuff(Zn, wn_HDR, InsRate, Bn, Bn_max);
                 
             case "MW"
                 schedule = MW(Xn, wn_MW, InsRate);
@@ -57,12 +70,14 @@ for i=1:Run
                 Xn = Xn_next;  
                 Zn = Zn + schedule.*InsRate;
             case "Live"
-                Xn_next = min(Toffset*qn, Xn + schedule.*InsRate); % for live streaming
+                Xn_next = min(Bn_max, Xn + schedule.*InsRate); % for live streaming
+                Un = Un + max(Xn + schedule.*InsRate - Bn_max, 0);
                 Bn = Bn + (Xn_next - Xn);
                 Xn = Xn_next;
                 Zn = Zn + schedule.*InsRate;
             case "Live-with-drop"
-                Xn_next = min(Toffset*qn, Xn + Dn.*qn + schedule.*InsRate) - Dn.*qn; % for live streaming with packet dropping             
+                Xn_next = min(Bn_max, Xn + Dn.*qn + schedule.*InsRate) - Dn.*qn; % for live streaming with packet dropping             
+                Un = Un + max(Xn + Dn.*qn + schedule.*InsRate - Bn_max, 0);
                 Bn = Bn + (Xn_next - Xn);
                 Xn = Xn_next;
                 Zn = Zn + schedule.*InsRate;
@@ -86,12 +101,14 @@ for i=1:Run
         Dn_history(:,t) = Dn;
         Bn_history(:,t) = Bn;
         Zn_history(:,t) = Zn;
+        Un_history(:,t) = Un;
         Schedule_history(:,t) = schedule;
     end
     
     
     %% Update average history
     Dn_Avg = Dn_Avg + Dn_history;
+    Un_Avg = Un_Avg + Un_history;
     
 end
 Dn_Avg = Dn_Avg./Run;
@@ -102,6 +119,8 @@ step_size = 1;
 tplot_start = 1;
 taxis = tplot_start:step_size:Ttot;
 createfigure_all(taxis, Dn_Avg(:,taxis));
-createfigure_all(taxis, DAll_Avg(taxis));
+%createfigure_all(taxis, DAll_Avg(taxis));
+createfigure_all_Un(taxis, Un_Avg(:,taxis));
+end
 
 toc;

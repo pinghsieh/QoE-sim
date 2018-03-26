@@ -4,13 +4,13 @@
 %% Common settings
 N = 10;
 Run = 1;
-Ttot = 100000;
+Ttot = 10000;
 Taxis = 1:1:Ttot;
 Roots = [2 10];
 frame_interval = 1;
 
 % offset time for live streaming
-Toffset = 100;
+Toffset = 10;
 
 %% Channel and playback
 channel_rate_vec{1} = [0, 1];
@@ -40,7 +40,7 @@ cdf_fade{10} = [0.5 1];
 %video_type = "Live";
 video_type = "Live-with-drop";
 
-rho = 1;
+rho = 0.99;
 qn = rho*(1023/1024)/10*ones(N,1);    % Consumption rate
 
 %% For policy
