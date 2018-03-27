@@ -18,7 +18,8 @@ for i=1:nRun
 %% 2. Random numbers
 D = zeros(1,T);
 U = zeros(1,T);
-X = upper/2;
+%X = upper/2;
+X = 0;
 dX = (2*randi([0 1],1,T) - 1)*step;
 
 %% 3. Derive D(t) and U(t)
@@ -53,9 +54,9 @@ taxis = 1:1:T;
 %plot(taxis, U, '-ob');
 figure;
 h1 = cdfplot(Dfinal);
-%figure;
-%h2 = cdfplot(Ufinal);
+figure;
+h2 = cdfplot(Ufinal);
 set(h1, 'LineStyle', '-', 'Color', 'r');
-%set(h2, 'LineStyle', '-', 'Color', 'r');
+set(h2, 'LineStyle', '-', 'Color', 'b');
 
 toc;

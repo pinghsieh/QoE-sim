@@ -3,8 +3,8 @@
 % 2 links
 %% Common settings
 N = 2;
-Run = 1;
-Ttot = 100000;
+Run = 10;
+Ttot = 500000;
 Taxis = 1:1:Ttot;
 Roots = [2 10];
 frame_interval = 1;
@@ -24,10 +24,10 @@ cdf_fade{2} = [0.5 1];
 video_type = "Live-with-drop";
 
 % offset time for live streaming
-rho = 1;
+rho = 0.8;
 qn_max = [3/8; 3/8];
 qn = rho*qn_max;    % Consumption rate
-Toffset{1} = [50; 50];
+Toffset{1} = [10; 10];
 %Toffset{2} = [70; 70];
 %Toffset{3} = [50; 50];
 %Toffset{4} = [30; 30];

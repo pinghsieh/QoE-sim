@@ -5,8 +5,10 @@ tic;
 %% Part 1: Configuration
 %config.config_ONOFF_3links;
 %config.config_ONOFF_1link;
-config.config_ONOFF_2links;
-%config.config_ONOFF_2links_with_dummy;
+%config.config_ONOFF_2links;
+config.config_ONOFF_2links_with_dummy;
+%config.config_ONOFF_1link;
+%config.config_ONOFF_1link_with_dummy;
 
 %% Part 2: Initialization
 for m=1:N_trials
@@ -113,6 +115,8 @@ for i=1:Run
 end
 Dn_Avg = Dn_Avg./Run;
 DAll_Avg = sum(Dn_Avg);
+Un_Avg = Un_Avg./Run;
+UAll_Avg = sum(Un_Avg);
 
 %% Part 4: Plotting
 step_size = 1;
