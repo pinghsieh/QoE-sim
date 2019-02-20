@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# Figures
+MATLAB/src/Sigmetrics_2019/figures/*
+MATLAB/src/Sigmetrics_2019/20190218/*
+Figures/*
+
